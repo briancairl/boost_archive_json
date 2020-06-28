@@ -1,0 +1,18 @@
+# Bazel Build Artifacts
+bazel-testlogs
+bazel-bin
+bazel-genfiles
+bazel-out
+bazel-boost_archive_json
+
+# Backup Files
+*.cpp~
+*.hpp~
+*.h~
+*.md~
+*.py~
+*.yaml~
+
+# Other files
+*.swp
+*.pyc

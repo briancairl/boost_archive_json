@@ -1,0 +1,9 @@
+build --copt=-O3
+build --copt=-g
+build --cxxopt='-std=c++17'
+build --cxxopt='-Wall'
+
+test --host_javabase=@local_jdk//:jdk
+test --javabase=@local_jdk//:jdk
+test --host_java_toolchain=@bazel_tools//tools/jdk:toolchain_hostjdk8
+test --java_toolchain=@bazel_tools//tools/jdk:toolchain_hostjdk8

@@ -1,0 +1,21 @@
+cc_test(
+    name="basic_json_iarchive",
+    srcs=["basic_json_iarchive.cpp"],
+    copts=["-Iexternal/googletest/googletest/include"],
+    deps=[
+        "//:json_iarchive",
+        "@googletest//:gtest",
+    ],
+    timeout="short",
+)
+
+cc_test(
+    name="basic_json_oarchive",
+    srcs=["basic_json_oarchive.cpp"],
+    copts=["-Iexternal/googletest/googletest/include"],
+    deps=[
+        "//:json_oarchive",
+        "@googletest//:gtest",
+    ],
+    timeout="short",
+)

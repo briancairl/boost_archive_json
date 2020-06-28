@@ -1,0 +1,12 @@
+repos:
+-   repo: git://github.com/doublify/pre-commit-clang-format
+    rev: 'f4c4ac5948aff384af2b439bfabb2bdd65d2b3ac'
+    hooks:
+    -   id: clang-format
+        files: \.(c|cc|cxx|cpp|h|hpp|hxx)$
+        args: [--style=file]
+-   repo: https://github.com/pre-commit/mirrors-autopep8
+    rev: 'v1.5.1'
+    hooks:
+    -   id: autopep8
+        args: [-a, -j 0, -i]
