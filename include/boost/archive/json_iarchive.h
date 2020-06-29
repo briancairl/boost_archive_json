@@ -47,6 +47,12 @@ public:
     load(value);
   }
 
+  template <typename T>
+  std::enable_if_t<!fusion::result_of::has_key<meta_type_conversions, T>::type::value> load_override(T& value)
+  {
+    detail::common_iarchive<json_iarchive>::load_override(value);
+  }
+
   template <typename T> void load(T& value)
   {
     if constexpr (fusion::result_of::has_key<picojson_native_types, T>::type::value)

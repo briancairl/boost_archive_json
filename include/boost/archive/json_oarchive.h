@@ -51,6 +51,12 @@ public:
     save(value);
   }
 
+  template <typename T>
+  std::enable_if_t<!fusion::result_of::has_key<meta_type_conversions, T>::type::value> save_override(T& value)
+  {
+    detail::common_oarchive<json_oarchive>::save_override(value);
+  }
+
   template <typename T> void save(const T& value)
   {
     if constexpr (fusion::result_of::has_key<picojson_native_types, T>::type::value)
