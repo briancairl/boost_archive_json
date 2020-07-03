@@ -12,7 +12,6 @@
 #include <boost/archive/detail/register_archive.hpp>
 
 // Boost Archive JSON
-#include <boost/archive/detail/abi_prefix.hpp>
 #include <boost/archive/picojson_wrapper.h>
 #include <boost/serialization/array.hpp>
 #include <boost/serialization/item_version_type.hpp>
