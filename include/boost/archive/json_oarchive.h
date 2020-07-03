@@ -2,11 +2,9 @@
 #define BOOST_ARCHIVE_JSON_OARCHIVE_H
 
 // C++ Standard Library
-#include <algorithm>
-#include <functional>
 #include <iterator>
 #include <ostream>
-#include <string>
+#include <sstream>
 #include <type_traits>
 
 // Boost
@@ -38,11 +36,21 @@ public:
 
   template <typename T> void save_override(const boost::serialization::nvp<T>& kv)
   {
-    picojson_wrapper::ctx_start(kv.name());
-    picojson_wrapper::object_start();
-    this->save(kv.const_value());
-    picojson_wrapper::object_end();
-    picojson_wrapper::ctx_end(kv.name());
+    try
+    {
+      picojson_wrapper::ctx_start(kv.name());
+      picojson_wrapper::object_start();
+      this->save(kv.const_value());
+      picojson_wrapper::object_end();
+      picojson_wrapper::ctx_end(kv.name());
+    }
+    catch (const std::runtime_error& err)
+    {
+      std::ostringstream oss;
+      oss << '[' << kv.name() << "] : " << err.what();
+      throw json_archive_exception{oss.str()};
+    }
+    // ctx_start --> std::logic_error intentionally not caught
   }
 
   template <typename T>

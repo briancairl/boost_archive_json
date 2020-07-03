@@ -4,6 +4,7 @@
 // C++ Standard Library
 #include <istream>
 #include <stack>
+#include <stdexcept>
 #include <type_traits>
 
 // Boost
