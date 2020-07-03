@@ -144,31 +144,27 @@ struct is_array_like<std::vector<T, OtherTs...>> : std::integral_constant<bool, 
 template <typename T> struct is_element_native_convertible : std::integral_constant<bool, false>
 {};
 
-template<typename T, std::size_t N>
-struct is_element_native_convertible<T[N]> :
-  std::integral_constant<
-    bool,
-    (fusion::result_of::has_key<picojson_native_types, T>::type::value or
-     fusion::result_of::has_key<picojson_conversions, T>::type::value)
-  >
+template <typename T, std::size_t N>
+struct is_element_native_convertible<T[N]> : std::integral_constant<
+                                               bool,
+                                               (fusion::result_of::has_key<picojson_native_types, T>::type::value or
+                                                fusion::result_of::has_key<picojson_conversions, T>::type::value)>
 {};
 
-template<typename T, std::size_t N>
-struct is_element_native_convertible<std::array<T, N>> :
-  std::integral_constant<
-    bool,
-    (fusion::result_of::has_key<picojson_native_types, T>::type::value or
-     fusion::result_of::has_key<picojson_conversions, T>::type::value)
-  >
+template <typename T, std::size_t N>
+struct is_element_native_convertible<std::array<T, N>>
+    : std::integral_constant<
+        bool,
+        (fusion::result_of::has_key<picojson_native_types, T>::type::value or
+         fusion::result_of::has_key<picojson_conversions, T>::type::value)>
 {};
 
-template<typename T, typename... OtherTs>
-struct is_element_native_convertible<std::vector<T, OtherTs...>> :
-  std::integral_constant<
-    bool,
-    (fusion::result_of::has_key<picojson_native_types, T>::type::value or
-     fusion::result_of::has_key<picojson_conversions, T>::type::value)
-  >
+template <typename T, typename... OtherTs>
+struct is_element_native_convertible<std::vector<T, OtherTs...>>
+    : std::integral_constant<
+        bool,
+        (fusion::result_of::has_key<picojson_native_types, T>::type::value or
+         fusion::result_of::has_key<picojson_conversions, T>::type::value)>
 {};
 
 }  // namespace detail
