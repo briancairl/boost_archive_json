@@ -2,11 +2,9 @@
 #define BOOST_ARCHIVE_PICOJSON_WRAPPER_H
 
 // C++ Standard Library
-#include <array>
 #include <istream>
 #include <stack>
 #include <type_traits>
-#include <vector>
 
 // Boost
 #include <boost/archive/basic_archive.hpp>
@@ -20,6 +18,15 @@
 
 // Picojson
 #include <picojson/picojson.h>
+
+// Forward Declarations
+namespace std
+{
+
+template <class T, std::size_t N> class array;
+template <class T, class AllocatorT> class vector;
+
+}  // namespace std
 
 namespace boost
 {
