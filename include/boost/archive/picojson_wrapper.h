@@ -128,17 +128,24 @@ private:
 namespace detail
 {
 
-template <typename T> struct is_bool_vector : std::integral_constant<bool, false>
+template <typename T> struct is_std_vector_bool : std::integral_constant<bool, false>
 {};
 
-template <typename... OtherTs> struct is_bool_vector<std::vector<bool, OtherTs...>> : std::integral_constant<bool, true>
+template <typename... OtherTs>
+struct is_std_vector_bool<std::vector<bool, OtherTs...>> : std::integral_constant<bool, true>
 {};
 
-template <typename T> struct is_array_like : std::integral_constant<bool, std::is_array<T>::value>
+template <typename T> struct is_fixed_size_array : std::integral_constant<bool, std::is_array<T>::value>
+{};
+
+template <typename T, std::size_t N> struct is_fixed_size_array<std::array<T, N>> : std::integral_constant<bool, true>
+{};
+
+template <typename T> struct is_std_vector : std::integral_constant<bool, false>
 {};
 
 template <typename T, typename... OtherTs>
-struct is_array_like<std::vector<T, OtherTs...>> : std::integral_constant<bool, true>
+struct is_std_vector<std::vector<T, OtherTs...>> : std::integral_constant<bool, true>
 {};
 
 template <typename T> struct is_element_native_convertible : std::integral_constant<bool, false>

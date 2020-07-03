@@ -74,7 +74,7 @@ public:
       auto cast_value = static_cast<cast_type>(value);
       save_override(boost::serialization::make_nvp(fusion::at_key<T>(meta_type_names), cast_value));
     }
-    else if constexpr (detail::is_array_like<T>::value)
+    else if constexpr (detail::is_std_vector<T>::value or detail::is_fixed_size_array<T>::value)
     {
       picojson_wrapper::array_start(std::distance(std::begin(value), std::end(value)));
 

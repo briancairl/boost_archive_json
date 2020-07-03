@@ -76,7 +76,7 @@ public:
     {
       /// ???
     }
-    else if constexpr (std::is_array<T>::value)
+    else if constexpr (detail::is_fixed_size_array<T>::value)
     {
       auto& read_value_array = picojson_wrapper::active().get<picojson::array>();
       auto witr = std::begin(value);
@@ -88,7 +88,7 @@ public:
         picojson_wrapper::ctx_pop();
       }
     }
-    else if constexpr (detail::is_bool_vector<T>::value)
+    else if constexpr (detail::is_std_vector_bool<T>::value)
     {
       auto& read_value_array = picojson_wrapper::active().get<picojson::array>();
       value.reserve(read_value_array.size());
@@ -102,7 +102,7 @@ public:
         picojson_wrapper::ctx_pop();
       }
     }
-    else if constexpr (detail::is_array_like<T>::value)
+    else if constexpr (detail::is_std_vector<T>::value)
     {
       auto& read_value_array = picojson_wrapper::active().get<picojson::array>();
       value.resize(read_value_array.size());
