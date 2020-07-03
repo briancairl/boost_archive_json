@@ -60,7 +60,7 @@ protected:
 
   void array_start(const std::size_t reserve);
 
-  constexpr void array_end() const {}
+  void array_end();
 
   void array_push();
 

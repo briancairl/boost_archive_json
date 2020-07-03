@@ -57,6 +57,8 @@ void picojson_wrapper::array_push()
   ctx_push(arr_ctx.back());
 }
 
+void picojson_wrapper::array_end() { ctx_pop(); }
+
 void picojson_wrapper::array_next() { ctx_pop(); }
 
 void picojson_wrapper::object_start() { active() = picojson::value{picojson::object{}}; }
