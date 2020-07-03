@@ -167,7 +167,7 @@ TEST_F(json_iarchive_test_suite, DeserializeNestedStruct)
   ASSERT_EQ(value, NestedTestStruct{});
 }
 
-TEST_F(json_iarchive_test_suite, DeserializeBoolArray)
+TEST_F(json_iarchive_test_suite, DeserializeBoolStdVector)
 {
   static const char* SERIALIZED = "{\"bool_array\":[true,false,true,false]}";
   this->create_iarchive(SERIALIZED);
@@ -179,7 +179,7 @@ TEST_F(json_iarchive_test_suite, DeserializeBoolArray)
   ASSERT_EQ(value, bool_array_value_target);
 }
 
-TEST_F(json_iarchive_test_suite, DeserializeIntArray)
+TEST_F(json_iarchive_test_suite, DeserializeIntStdVector)
 {
   static const char* SERIALIZED = "{\"int_array\":[1,2,3,4]}";
   this->create_iarchive(SERIALIZED);
@@ -191,7 +191,7 @@ TEST_F(json_iarchive_test_suite, DeserializeIntArray)
   ASSERT_EQ(value, int_array_value_target);
 }
 
-TEST_F(json_iarchive_test_suite, DeserializeFloatArray)
+TEST_F(json_iarchive_test_suite, DeserializeFloatStdVector)
 {
   static const char* SERIALIZED = "{\"float_array\":[1,2,3,4]}";
   this->create_iarchive(SERIALIZED);
@@ -203,7 +203,7 @@ TEST_F(json_iarchive_test_suite, DeserializeFloatArray)
   ASSERT_EQ(value, float_array_value_target);
 }
 
-TEST_F(json_iarchive_test_suite, DeserializeDoubleArray)
+TEST_F(json_iarchive_test_suite, DeserializeDoubleStdVector)
 {
   static const char* SERIALIZED = "{\"double_array\":[1,2,3,4]}";
   this->create_iarchive(SERIALIZED);
@@ -215,7 +215,7 @@ TEST_F(json_iarchive_test_suite, DeserializeDoubleArray)
   ASSERT_EQ(value, double_array_value_target);
 }
 
-TEST_F(json_iarchive_test_suite, DeserializeStringArray)
+TEST_F(json_iarchive_test_suite, DeserializeStringStdVector)
 {
   static const char* SERIALIZED = "{\"string_array\":[\"p\",\"i\",\"c\",\"o\"]}";
   this->create_iarchive(SERIALIZED);
@@ -227,7 +227,7 @@ TEST_F(json_iarchive_test_suite, DeserializeStringArray)
   ASSERT_EQ(value, string_array_value_target);
 }
 
-TEST_F(json_iarchive_test_suite, DeserializeStructArray)
+TEST_F(json_iarchive_test_suite, DeserializeStructStdVector)
 {
   // clang-format off
   static const char* SERIALIZED =
@@ -244,5 +244,85 @@ TEST_F(json_iarchive_test_suite, DeserializeStructArray)
   ((*ar) & boost::serialization::make_nvp("struct_array", value));
 
   const std::vector<TestStruct> struct_array_value_target{TestStruct{}, TestStruct{}};
+  ASSERT_EQ(value, struct_array_value_target);
+}
+
+TEST_F(json_iarchive_test_suite, DeserializeBoolStdArray)
+{
+  static const char* SERIALIZED = "{\"bool_array\":[true,false,true,false]}";
+  this->create_iarchive(SERIALIZED);
+
+  std::array<bool, 4> value;
+  ((*ar) & boost::serialization::make_nvp("bool_array", value));
+
+  const std::array<bool, 4> bool_array_value_target{true, false, true, false};
+  ASSERT_EQ(value, bool_array_value_target);
+}
+
+TEST_F(json_iarchive_test_suite, DeserializeIntStdArray)
+{
+  static const char* SERIALIZED = "{\"int_array\":[1,2,3,4]}";
+  this->create_iarchive(SERIALIZED);
+
+  std::array<int, 4> value;
+  ((*ar) & boost::serialization::make_nvp("int_array", value));
+
+  const std::array<int, 4> int_array_value_target{1, 2, 3, 4};
+  ASSERT_EQ(value, int_array_value_target);
+}
+
+TEST_F(json_iarchive_test_suite, DeserializeFloatStdArray)
+{
+  static const char* SERIALIZED = "{\"float_array\":[1,2,3,4]}";
+  this->create_iarchive(SERIALIZED);
+
+  std::array<float, 4> value;
+  ((*ar) & boost::serialization::make_nvp("float_array", value));
+
+  const std::array<float, 4> float_array_value_target{1.0f, 2.0f, 3.0f, 4.0f};
+  ASSERT_EQ(value, float_array_value_target);
+}
+
+TEST_F(json_iarchive_test_suite, DeserializeDoubleStdArray)
+{
+  static const char* SERIALIZED = "{\"double_array\":[1,2,3,4]}";
+  this->create_iarchive(SERIALIZED);
+
+  std::array<double, 4> value;
+  ((*ar) & boost::serialization::make_nvp("double_array", value));
+
+  const std::array<double, 4> double_array_value_target{1.0, 2.0, 3.0, 4.0};
+  ASSERT_EQ(value, double_array_value_target);
+}
+
+TEST_F(json_iarchive_test_suite, DeserializeStringStdArray)
+{
+  static const char* SERIALIZED = "{\"string_array\":[\"p\",\"i\",\"c\",\"o\"]}";
+  this->create_iarchive(SERIALIZED);
+
+  std::array<std::string, 4> value;
+  ((*ar) & boost::serialization::make_nvp("string_array", value));
+
+  const std::array<std::string, 4> string_array_value_target{"p", "i", "c", "o"};
+  ASSERT_EQ(value, string_array_value_target);
+}
+
+TEST_F(json_iarchive_test_suite, DeserializeStructStdArray)
+{
+  // clang-format off
+  static const char* SERIALIZED =
+    "{"
+      "\"struct_array\":["
+        "{\"_class_id_optional\":0,\"_tracking\":false,\"_version\":0,\"m\":111},"
+        "{\"m\":111}"
+      "]"
+    "}";
+  // clang-format on
+  this->create_iarchive(SERIALIZED);
+
+  std::array<TestStruct, 2> value;
+  ((*ar) & boost::serialization::make_nvp("struct_array", value));
+
+  const std::array<TestStruct, 2> struct_array_value_target{TestStruct{}, TestStruct{}};
   ASSERT_EQ(value, struct_array_value_target);
 }
