@@ -114,6 +114,17 @@ const meta_type_names_t meta_type_names{fusion::make_pair<archive::class_id_type
                                         fusion::make_pair<archive::tracking_type>("_tracking"),
                                         fusion::make_pair<archive::class_name_type>("_class_name")};
 
+class json_archive_exception final : public std::exception
+{
+public:
+  explicit json_archive_exception(std::string reason) : reason_{std::move(reason)} {}
+
+  const char* what() const noexcept override { return reason_.c_str(); };
+
+private:
+  std::string reason_;
+};
+
 namespace detail
 {
 
