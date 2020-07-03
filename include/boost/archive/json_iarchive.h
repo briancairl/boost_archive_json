@@ -2,7 +2,9 @@
 #define BOOST_ARCHIVE_JSON_IARCHIVE_H
 
 // C++ Standard Library
+#include <iterator>
 #include <istream>
+#include <sstream>
 
 // Boost
 #include <boost/archive/detail/register_archive.hpp>
@@ -36,9 +38,19 @@ public:
 
   template <typename T> void load_override(const boost::serialization::nvp<T>& kv)
   {
-    picojson_wrapper::ctx_start(kv.name());
-    this->load(kv.value());
-    picojson_wrapper::ctx_end(kv.name());
+    try
+    {
+      picojson_wrapper::ctx_start(kv.name());
+      this->load(kv.value());
+      picojson_wrapper::ctx_end(kv.name());
+    }
+    catch (const std::runtime_error& err)
+    {
+      std::ostringstream oss;
+      oss << '[' << kv.name() << "] : " << err.what();
+      throw json_archive_exception{oss.str()};
+    }
+    // ctx_start --> std::logic_error intentionally not caught
   }
 
   template <typename T>
@@ -76,7 +88,7 @@ public:
     {
       /// ???
     }
-    else if constexpr (std::is_array<T>::value)
+    else if constexpr (detail::is_fixed_size_array<T>::value)
     {
       auto& read_value_array = picojson_wrapper::active().get<picojson::array>();
       auto witr = std::begin(value);
@@ -88,7 +100,7 @@ public:
         picojson_wrapper::ctx_pop();
       }
     }
-    else if constexpr (detail::is_bool_vector<T>::value)
+    else if constexpr (detail::is_std_vector_bool<T>::value)
     {
       auto& read_value_array = picojson_wrapper::active().get<picojson::array>();
       value.reserve(read_value_array.size());
@@ -102,7 +114,7 @@ public:
         picojson_wrapper::ctx_pop();
       }
     }
-    else if constexpr (detail::is_array_like<T>::value)
+    else if constexpr (detail::is_std_vector<T>::value)
     {
       auto& read_value_array = picojson_wrapper::active().get<picojson::array>();
       value.resize(read_value_array.size());

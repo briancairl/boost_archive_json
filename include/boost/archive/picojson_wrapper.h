@@ -2,11 +2,10 @@
 #define BOOST_ARCHIVE_PICOJSON_WRAPPER_H
 
 // C++ Standard Library
-#include <array>
 #include <istream>
 #include <stack>
+#include <stdexcept>
 #include <type_traits>
-#include <vector>
 
 // Boost
 #include <boost/archive/basic_archive.hpp>
@@ -20,6 +19,15 @@
 
 // Picojson
 #include <picojson/picojson.h>
+
+// Forward Declarations
+namespace std
+{
+
+template <class T, std::size_t N> class array;
+template <class T, class AllocatorT> class vector;
+
+}  // namespace std
 
 namespace boost
 {
@@ -107,50 +115,64 @@ const meta_type_names_t meta_type_names{fusion::make_pair<archive::class_id_type
                                         fusion::make_pair<archive::tracking_type>("_tracking"),
                                         fusion::make_pair<archive::class_name_type>("_class_name")};
 
+class json_archive_exception final : public std::exception
+{
+public:
+  explicit json_archive_exception(std::string reason) : reason_{std::move(reason)} {}
+
+  const char* what() const noexcept override { return reason_.c_str(); };
+
+private:
+  std::string reason_;
+};
+
 namespace detail
 {
 
-template <typename T> struct is_bool_vector : std::integral_constant<bool, false>
+template <typename T> struct is_std_vector_bool : std::integral_constant<bool, false>
 {};
 
-template <typename... OtherTs> struct is_bool_vector<std::vector<bool, OtherTs...>> : std::integral_constant<bool, true>
+template <typename... OtherTs>
+struct is_std_vector_bool<std::vector<bool, OtherTs...>> : std::integral_constant<bool, true>
 {};
 
-template <typename T> struct is_array_like : std::integral_constant<bool, std::is_array<T>::value>
+template <typename T> struct is_fixed_size_array : std::integral_constant<bool, std::is_array<T>::value>
+{};
+
+template <typename T, std::size_t N> struct is_fixed_size_array<std::array<T, N>> : std::integral_constant<bool, true>
+{};
+
+template <typename T> struct is_std_vector : std::integral_constant<bool, false>
 {};
 
 template <typename T, typename... OtherTs>
-struct is_array_like<std::vector<T, OtherTs...>> : std::integral_constant<bool, true>
+struct is_std_vector<std::vector<T, OtherTs...>> : std::integral_constant<bool, true>
 {};
 
 template <typename T> struct is_element_native_convertible : std::integral_constant<bool, false>
 {};
 
-template<typename T, std::size_t N>
-struct is_element_native_convertible<T[N]> :
-  std::integral_constant<
-    bool,
-    (fusion::result_of::has_key<picojson_native_types, T>::type::value or
-     fusion::result_of::has_key<picojson_conversions, T>::type::value)
-  >
+template <typename T, std::size_t N>
+struct is_element_native_convertible<T[N]> : std::integral_constant<
+                                               bool,
+                                               (fusion::result_of::has_key<picojson_native_types, T>::type::value or
+                                                fusion::result_of::has_key<picojson_conversions, T>::type::value)>
 {};
 
-template<typename T, std::size_t N>
-struct is_element_native_convertible<std::array<T, N>> :
-  std::integral_constant<
-    bool,
-    (fusion::result_of::has_key<picojson_native_types, T>::type::value or
-     fusion::result_of::has_key<picojson_conversions, T>::type::value)
-  >
+template <typename T, std::size_t N>
+struct is_element_native_convertible<std::array<T, N>>
+    : std::integral_constant<
+        bool,
+        (fusion::result_of::has_key<picojson_native_types, T>::type::value or
+         fusion::result_of::has_key<picojson_conversions, T>::type::value)>
 {};
 
-template<typename T, typename... OtherTs>
-struct is_element_native_convertible<std::vector<T, OtherTs...>> :
-  std::integral_constant<
-    bool,
-    (fusion::result_of::has_key<picojson_native_types, T>::type::value or
-     fusion::result_of::has_key<picojson_conversions, T>::type::value)
-  >
+template <typename T, typename... OtherTs>
+struct is_element_native_convertible<std::vector<T, OtherTs...>>
+    : std::integral_constant<
+        bool,
+        (fusion::result_of::has_key<picojson_native_types, T>::type::value or
+         fusion::result_of::has_key<picojson_conversions, T>::type::value)>
 {};
 
 }  // namespace detail
