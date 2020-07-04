@@ -9,12 +9,8 @@ namespace boost
 namespace archive
 {
 
-picojson_wrapper::picojson_wrapper(std::istream& is) :
-    root_{[&is] {
-      picojson::value json;
-      picojson::parse(json, is);
-      return json;
-    }()}
+picojson_wrapper::picojson_wrapper(picojson::value root) :
+    root_{std::move(root)}
 {
   ctx_push(root_);
 }

@@ -2,7 +2,6 @@
 #define BOOST_ARCHIVE_PICOJSON_WRAPPER_H
 
 // C++ Standard Library
-#include <istream>
 #include <stack>
 #include <stdexcept>
 #include <type_traits>
@@ -39,13 +38,12 @@ using picojson_real_number_type = double;
 class picojson_wrapper
 {
 public:
-  explicit picojson_wrapper(std::istream& is);
+  explicit picojson_wrapper(picojson::value root);
 
   picojson_wrapper();
 
   ~picojson_wrapper() = default;
 
-protected:
   void ctx_start(const char* tag);
 
   void ctx_end(const char* tag);
@@ -68,6 +66,13 @@ protected:
 
   picojson::value& active();
 
+  template<typename OutputStreamIteratorT>
+  inline void serialize(OutputStreamIteratorT&& oit, const bool prettify)
+  {
+    root_.serialize(std::forward<OutputStreamIteratorT>(oit), prettify);
+  }
+
+private:
   std::stack<picojson::value*> ctx_stack_;
   picojson::value root_;
 };
