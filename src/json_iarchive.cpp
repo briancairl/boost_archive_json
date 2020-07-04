@@ -12,7 +12,13 @@ namespace boost
 namespace archive
 {
 
-json_iarchive::json_iarchive(std::istream& is) : picojson_wrapper{is} {}
+json_iarchive::json_iarchive(std::istream& is) : json_{
+  [&is] {
+    picojson::value json;
+    picojson::parse(json, is);
+    return json;
+  }()}
+{}
 
 template class detail::archive_serializer_map<json_iarchive>;
 

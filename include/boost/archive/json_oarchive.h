@@ -22,26 +22,26 @@ namespace boost
 namespace archive
 {
 
-class json_oarchive : public picojson_wrapper, public detail::common_oarchive<json_oarchive>
+class json_oarchive : public detail::common_oarchive<json_oarchive>
 {
 public:
   explicit json_oarchive(std::ostream& os, const bool prettify = false);
 
   ~json_oarchive();
 
-  inline void save_start(const char* tag) { picojson_wrapper::ctx_start(tag); }
+  inline void save_start(const char* tag) { json_.ctx_start(tag); }
 
-  inline void save_end(const char* tag) { picojson_wrapper::ctx_end(tag); }
+  inline void save_end(const char* tag) { json_.ctx_end(tag); }
 
   template <typename T> void save_override(const boost::serialization::nvp<T>& kv)
   {
     try
     {
-      picojson_wrapper::ctx_start(kv.name());
-      picojson_wrapper::object_start();
+      json_.ctx_start(kv.name());
+      json_.object_start();
       this->save(kv.const_value());
-      picojson_wrapper::object_end();
-      picojson_wrapper::ctx_end(kv.name());
+      json_.object_end();
+      json_.ctx_end(kv.name());
     }
     catch (const std::runtime_error& err)
     {
@@ -68,12 +68,12 @@ public:
   {
     if constexpr (fusion::result_of::has_key<picojson_native_types, T>::type::value)
     {
-      picojson_wrapper::active() = picojson::value{value};
+      json_.active() = picojson::value{value};
     }
     else if constexpr (fusion::result_of::has_key<picojson_conversions, T>::type::value)
     {
       using cast_type = typename fusion::result_of::value_at_key<picojson_conversions, T>::type;
-      picojson_wrapper::active() = picojson::value{static_cast<cast_type>(value)};
+      json_.active() = picojson::value{static_cast<cast_type>(value)};
     }
     else if constexpr (fusion::result_of::has_key<meta_type_conversions, T>::type::value)
     {
@@ -83,20 +83,20 @@ public:
     }
     else if constexpr (detail::is_std_vector<T>::value or detail::is_fixed_size_array<T>::value)
     {
-      picojson_wrapper::array_start(std::distance(std::begin(value), std::end(value)));
+      json_.array_start(std::distance(std::begin(value), std::end(value)));
 
       for (const auto& element : value)
       {
-        picojson_wrapper::array_push();
+        json_.array_push();
         if constexpr (!detail::is_element_native_convertible<T>::value)
         {
-          picojson_wrapper::object_start();
+          json_.object_start();
         }
         this->save(element);
-        picojson_wrapper::object_end();
+        json_.object_end();
       }
 
-      picojson_wrapper::array_end();
+      json_.array_end();
     }
     else
     {
@@ -105,7 +105,8 @@ public:
   }
 
 private:
-  std::reference_wrapper<std::ostream> os_;
+  picojson_wrapper json_;
+  std::ostream* os_;
   bool prettify_;
 };
 

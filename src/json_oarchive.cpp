@@ -14,10 +14,12 @@ namespace boost
 namespace archive
 {
 
-json_oarchive::json_oarchive(std::ostream& os, const bool prettify) : picojson_wrapper{}, os_{os}, prettify_{prettify}
+json_oarchive::json_oarchive(std::ostream& os, const bool prettify) : json_{}, os_{std::addressof(os)}, prettify_{prettify}
 {}
 
-json_oarchive::~json_oarchive() { picojson_wrapper::root_.serialize(std::ostream_iterator<char>(os_), prettify_); }
+json_oarchive::~json_oarchive() {
+  json_.serialize(std::ostream_iterator<char>(*os_), prettify_);
+}
 
 template class detail::archive_serializer_map<json_oarchive>;
 
