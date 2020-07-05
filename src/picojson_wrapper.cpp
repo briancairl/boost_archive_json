@@ -21,7 +21,7 @@ void picojson_wrapper::ctx_start(const char* tag)
 {
   if (!active().is<picojson::object>())
   {
-    throw std::logic_error{"Context must start from 'picojson::object' state"};
+    throw json_archive_exception{"Current JSON context is empty"};
   }
 
   auto& ctx = active().get<picojson::object>();

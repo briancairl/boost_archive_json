@@ -62,6 +62,31 @@ public:
   std::optional<boost::archive::json_iarchive> ar;
 };
 
+TEST_F(json_iarchive_test_suite, DeserializeThrowOnEmpty)
+{
+  static const char* SERIALIZED = "";
+  this->create_iarchive(SERIALIZED);
+
+  bool value;
+  ASSERT_THROW(
+    ((*ar) & boost::serialization::make_nvp("bool", value)),
+    boost::archive::json_archive_exception
+  );
+}
+
+TEST_F(json_iarchive_test_suite, DeserializeThrowOnMissing)
+{
+  static const char* SERIALIZED = "{\"bool\":true}";
+  this->create_iarchive(SERIALIZED);
+
+  bool value;
+  ASSERT_THROW(
+    ((*ar) & boost::serialization::make_nvp("not_bool", value)),
+    boost::archive::json_archive_exception
+  );
+}
+
+
 TEST_F(json_iarchive_test_suite, DeserializeBool)
 {
   static const char* SERIALIZED = "{\"bool\":true}";
