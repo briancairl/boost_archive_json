@@ -1,5 +1,7 @@
 # `boost::archive::json*`
 
+[![Build Status](https://travis-ci.com/briancairl/boost_archive_json.svg?branch=master)](https://travis-ci.com/briancairl/boost_archive_json)
+
 ## Background
 
 This library provides JSON input/output archive objects usable with [boost serialization](https://www.boost.org/doc/libs/1_71_0/libs/serialization/doc/serialization.html) module.
@@ -132,8 +134,3 @@ If there is a demonstrated need for C++11/14 support, getting things in shape wo
 
 I've been using [bazel](https://bazel.build/) for most of my personal projects, though I understand its not the prevailing "go-to" for most people.
 A CMake build should be easy to concoct as well for anyway who wants to do it. Though I have no plans to make one, myself, it would be an appreciated contribution.
-
-
-### CI
-
-If this becomes important to someone other than myself, I'll set up some sort of CI for this repo.
