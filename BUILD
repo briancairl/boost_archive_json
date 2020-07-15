@@ -3,7 +3,7 @@ cc_library(
   hdrs=["include/boost/archive/picojson_wrapper.h"],
   srcs=["src/picojson_wrapper.cpp"],
   strip_include_prefix="include/",
-  deps=["@picojson//:picojson",],
+  deps=["@picojson//:picojson", "@boost//:serialization",],
   visibility=["//visibility:private"],
 )
 
